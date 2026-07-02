@@ -28,7 +28,7 @@ $resultat = $pdo->query($sql);
     <?php if (!isset($_SESSION['nom'])) { ?>
     <a href="login.php" class="btn btn-primary mb-3">Se connecter</a>
     <?php } else { ?>
-    <a href="logout.php" class="btn btn-warning mb-3">Se déconnecter</a>
+    <a href="logout.php" class="btn btn-warning text-white mb-3">Se déconnecter</a>
     <?php } ?>
 
     <table class="table">
