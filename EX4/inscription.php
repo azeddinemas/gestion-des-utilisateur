@@ -1,3 +1,29 @@
+<?php
+require "connexion.php";
+
+$a = false;
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nom = trim($_POST['nom']);
+    $email = trim($_POST['email']);
+    $age = trim($_POST['age']);
+    $password = trim($_POST['password']);
+    $cpass = trim($_POST['cpass']);
+
+    if ($password !== $cpass) {
+        $a = true;
+    } else {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = "INSERT INTO utilisateurs (nom, email, age, password) VALUES (?, ?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$nom, $email, $age, $hash]);
+
+        header("Location: index.php");
+        exit();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,15 +36,12 @@
 </head>
 
 <body>
-    <!-- <form method="POST" class="container mt-5">
-        Nom: <input type="text" name="nom" required><br>
-        Email: <input type="email" name="email" required><br>
-        Age: <input type="number" name="age" min="1" max="120" required><br>
-        Mot de passe: <input type="password" name="password" required><br>
-        <button type="submit">S'inscrire</button>
-        <a href="login.php">Se connecter</a>
-    </form> -->
-     <div class="mx-auto card shadow-lg p-3 mb-5 bg-white rounded" style="max-width: 380px; margin-top: 99px; border-radius: 6px;">
+    <div class="mx-auto card shadow-lg p-3 mb-5 bg-white rounded" style="max-width: 380px; margin-top: 99px; border-radius: 6px;">
+        <?php if ($a === true): ?>
+        <div class="alert alert-danger" role="alert">
+            Les mots de passe ne correspondent pas.
+        </div>
+        <?php endif; ?>
         <form method="POST" class="needs-validation" novalidate>
             <div class="text-center mb-3">
                 <h2>Sign up</h2>
@@ -26,12 +49,12 @@
             <hr>
             <div class="mb-3">
                 <label class="form-label">User name</label>
-                <input type="text" name ="nom" class="form-control" placeholder="Entre votre nom" required>
+                <input type="text" name="nom" class="form-control" placeholder="Entre votre nom" required>
                 <span class="invalid-feedback">Please choose a name.</span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Age</label>
-                <input type="number" name ="age" class="form-control"  min="1" max="120" placeholder="Votre Age" required>
+                <input type="number" name="age" class="form-control" min="1" max="120" placeholder="Votre Age" required>
                 <span class="invalid-feedback">Please choose a name.</span>
             </div>
             <div class="mb-3">
@@ -39,15 +62,15 @@
                 <input type="email" name="email" class="form-control" placeholder="email@example.com" required>
                 <span class="invalid-feedback">Please choose a email.</span>
             </div>
-          
+
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" name ="password" class="form-control" placeholder="Password" required>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
                 <span class="invalid-feedback">Please choose a password.</span>
             </div>
             <div class="mb-3">
                 <label class="form-label">Confirme Password</label>
-                <input type="password" name ="cpass" class="form-control" placeholder="Confirme Password" required >
+                <input type="password" name="cpass" class="form-control" placeholder="Confirme Password" required>
                 <span class="invalid-feedback">Please choose a config password.</span>
             </div>
             <div class="d-grid">
@@ -56,38 +79,7 @@
 
         </form>
         <a class="text-body-secondary" href="login.php">Already have an account?Login here.</a>
-        <?php
-            $a=false;
-            if ($a ===true) {
-                echo "<h2>Sign up</h2>";
-                exit();
-                } 
-        ?>
     </div>
 </body>
 
 </html>
-
-<?php
-require "connexion.php";
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = trim($_POST['nom']);
-    $email = trim($_POST['email']);
-    $age =trim($_POST['age']) ;
-    $password = trim($_POST['password']);
-    $cpass = trim($_POST['cpass']);
-    if ($password !== $cpass) {
-        $a = true;
-        // exit();
-    }else $a = false;
-    // Hash mot de passe
-    $hash = password_hash($password, PASSWORD_DEFAULT);
-    
-    // Insertion
-    $sql = "INSERT INTO utilisateurs (nom, email, age, password) VALUES (?, ?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-    
-    $stmt->execute([$nom, $email, $age, $hash]);
-    header("Location: index.php");
-    exit();
-}

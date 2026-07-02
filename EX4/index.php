@@ -25,11 +25,9 @@ $resultat = $pdo->query($sql);
 
 <body>
     <h1 class="text-center my-4">Liste des utilisateurs</h1>
-    <?php if (!isset($_SESSION['nom'])) { ?>
-    <a href="login.php" class="btn btn-primary mb-3">Se connecter</a>
-    <?php } else { ?>
+
     <a href="logout.php" class="btn btn-warning text-white mb-3">Se déconnecter</a>
-    <?php } ?>
+
 
     <table class="table">
         <thead>
@@ -48,14 +46,28 @@ $resultat = $pdo->query($sql);
                 <td><?= $row["email"] ?></td>
                 <td class="text-center">
                     <a href="modifier.php?id=<?= $row["id"] ?>" class="btn btn-sm btn-primary">Modifier</a>
-                    <a href="supprimer.php?id=<?= $row["id"] ?>" class="btn btn-sm btn-danger">Supprimer</a>
+                    <a href="?id=<?= $row["id"] ?>" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?')" class="btn btn-sm btn-danger">Supprimer</a>
                 </td>
             </tr>
             <?php } ?>
         </tbody>
+
+        <?php
+            if(isset($_GET['id'])){
+            $id=$_GET['id'];    
+            $sql="DELETE FROM utilisateurs WHERE id='$id'";
+            $resultat=$pdo->exec($sql);
+        ?>
+        <script>
+        window.location.href = 'index.php';
+        </script>
+        <?php }?>
     </table>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 
 </html>
+<?php
+
+?>
